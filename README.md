@@ -1,3 +1,3 @@
 # Vlayer
 
-wget -O Vlayer.sh https://raw.githubusercontent.com/sdohuajia/Vlayer/refs/heads/main/Vlayer.sh && sed -i 's/\r$//' Vlayer.sh && chmod +x Vlayer.sh && ./Vlayer.sh
+wget -O vlayer.sh https://raw.githubusercontent.com/sdohuajia/vlayer/refs/heads/main/vlayer.sh && sed -i 's/\r$//' vlayer.sh && chmod +x vlayer.sh && ./vlayer.sh

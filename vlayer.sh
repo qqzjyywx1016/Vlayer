@@ -107,17 +107,28 @@ install_dependencies() {
     docker exec $CONTAINER_NAME /bin/bash -c "
         set -e
         echo '更新系统...'
-        apt update && apt upgrade -y
+        proxychains4 apt update && proxychains4 apt upgrade -y
         
         echo '安装基础工具...'
-        apt install -y curl git unzip build-essential jq sudo
+        proxychains4 apt install -y curl git unzip build-essential jq sudo
+        
+        echo '安装并配置proxychains4...'
+        proxychains4 apt install -y proxychains4
+        sudo tee /etc/proxychains4.conf <<EOF
+strict_chain
+proxy_dns
+tcp_read_time_out 15000
+tcp_connect_time_out 8000
+[ProxyList]
+socks5 192.168.1.100 1080  # 替换为实际代理地址
+EOF
         
         echo '设置环境变量...'
         echo 'export PATH=\"\$HOME/.cargo/bin:\$HOME/.foundry/bin:\$HOME/.bun/bin:\$HOME/.vlayer/bin:\$PATH\"' >> ~/.bashrc
         
         # 安装Rust
         echo '安装Rust...'
-        proxychains4 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        proxychains4 -q curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source \$HOME/.cargo/env
         
         # 验证Rust安装
@@ -129,9 +140,9 @@ install_dependencies() {
         
         # 安装Foundry
         echo '安装Foundry...'
-        proxychains4 curl -L https://foundry.paradigm.xyz | bash
+        proxychains4 -q curl -L https://foundry.paradigm.xyz | bash
         source ~/.bashrc
-        \$HOME/.foundry/bin/foundryup
+        proxychains4 \$HOME/.foundry/bin/foundryup
         
         # 验证Foundry安装
         if ! command -v forge > /dev/null; then
@@ -150,10 +161,10 @@ install_dependencies() {
         # 安装Bun
         echo '安装Bun...'
         BUN_INSTALL_DIR=\"\$HOME/.bun\"
-        proxychains4 curl -fsSL https://bun.sh/install | bash || { 
+        proxychains4 -q curl -fsSL https://bun.sh/install | bash || { 
             echo 'Bun安装失败！尝试备用安装方法...'
             sudo apt install -y unzip
-            proxychains4 curl -fsSL https://bun.sh/install | bash
+            proxychains4 -q curl -fsSL https://bun.sh/install | bash
         }
         export BUN_INSTALL=\"\$BUN_INSTALL_DIR\"
         export PATH=\"\$BUN_INSTALL/bin:\$PATH\"
@@ -174,9 +185,9 @@ install_dependencies() {
         
         # 安装Vlayer
         echo '安装Vlayer...'
-        proxychains4 curl -SL https://install.vlayer.xyz | bash
+        proxychains4 -q curl -SL https://install.vlayer.xyz | bash
         source ~/.bashrc
-        \$HOME/.vlayer/bin/vlayerup
+        proxychains4 \$HOME/.vlayer/bin/vlayerup
         
         # 验证Vlayer安装
         if ! command -v vlayer > /dev/null; then
@@ -229,7 +240,7 @@ setup_project() {
             echo '项目已存在，跳过初始化...'
         else
             echo '初始化新项目...'
-            vlayer init \"$PROJECT_NAME\" --template simple-email-proof || {
+            proxychains4 vlayer init \"$PROJECT_NAME\" --template simple-email-proof || {
                 echo '❌ vlayer init失败！可能原因：'
                 echo '1. 网络问题'
                 echo '2. VLAYER_API_TOKEN无效'
@@ -242,7 +253,7 @@ setup_project() {
         
         # 构建Solidity项目
         echo '构建Solidity合约...'
-        forge build || {
+        proxychains4 forge build || {
             echo '❌ forge build失败！可能原因：'
             echo '1. Foundry安装问题'
             echo '2. 合约代码错误'
@@ -252,7 +263,7 @@ setup_project() {
         # 设置前端环境
         cd vlayer || exit 1
         echo '安装前端依赖...'
-        bun install || {
+        proxychains4 bun install || {
             echo '❌ bun install失败！可能原因：'
             echo '1. 网络问题'
             echo '2. Bun安装不完整'
@@ -310,7 +321,7 @@ while true; do
     log '开始执行证明...'
     
     # 明确设置VLAYER_ENV环境变量
-    if VLAYER_ENV=testnet bun run prove.ts >> /root/prove.log 2>&1; then
+    if proxychains4 VLAYER_ENV=testnet bun run prove.ts >> /root/prove.log 2>&1; then
         log '证明执行成功'
     else
         log '证明执行失败'

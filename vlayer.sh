@@ -157,7 +157,7 @@ install_dependencies() {
     }
 }
 
-        echo 'Vlayer版本：' \$(vlayer --version || echo '未知')
+        echo 'Vlayer版本：' \$(vlayer --version || echo '未知'
         
         # 设置Git配置
         git config --global user.name 'vlayer-user'

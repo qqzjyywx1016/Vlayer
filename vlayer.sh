@@ -72,7 +72,7 @@ setup_container() {
     
     # 拉取镜像
     echo "拉取Ubuntu 24.04镜像..."
-    docker pull $IMAGE_NAME
+    sudo docker pull $IMAGE_NAME
 
     # 停止并删除已有容器
     if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then

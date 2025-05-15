@@ -117,7 +117,7 @@ install_dependencies() {
         
         # 安装Rust
         echo '安装Rust...'
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        proxychains4 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source \$HOME/.cargo/env
         
         # 验证Rust安装
@@ -129,7 +129,7 @@ install_dependencies() {
         
         # 安装Foundry
         echo '安装Foundry...'
-        curl -L https://foundry.paradigm.xyz | bash
+        proxychains4 curl -L https://foundry.paradigm.xyz | bash
         source ~/.bashrc
         \$HOME/.foundry/bin/foundryup
         
@@ -150,10 +150,10 @@ install_dependencies() {
         # 安装Bun
         echo '安装Bun...'
         BUN_INSTALL_DIR=\"\$HOME/.bun\"
-        curl -fsSL https://bun.sh/install | bash || { 
+        proxychains4 curl -fsSL https://bun.sh/install | bash || { 
             echo 'Bun安装失败！尝试备用安装方法...'
             sudo apt install -y unzip
-            curl -fsSL https://bun.sh/install | bash
+            proxychains4 curl -fsSL https://bun.sh/install | bash
         }
         export BUN_INSTALL=\"\$BUN_INSTALL_DIR\"
         export PATH=\"\$BUN_INSTALL/bin:\$PATH\"
@@ -174,7 +174,7 @@ install_dependencies() {
         
         # 安装Vlayer
         echo '安装Vlayer...'
-        curl -SL https://install.vlayer.xyz | bash
+        proxychains4 curl -SL https://install.vlayer.xyz | bash
         source ~/.bashrc
         \$HOME/.vlayer/bin/vlayerup
         

@@ -29,12 +29,14 @@ check_env_vars() {
         echo "请输入 VLAYER_API_TOKEN："
         read -r VLAYER_API_TOKEN
         [ -z "$VLAYER_API_TOKEN" ] && { echo "错误：VLAYER_API_TOKEN 不能为空！"; exit 1; }
+        export VLAYER_API_TOKEN  # 导出环境变量
     fi
 
     if [ -z "$EXAMPLES_TEST_PRIVATE_KEY" ]; then
         echo "请输入 EXAMPLES_TEST_PRIVATE_KEY："
         read -r EXAMPLES_TEST_PRIVATE_KEY
         [ -z "$EXAMPLES_TEST_PRIVATE_KEY" ] && { echo "错误：EXAMPLES_TEST_PRIVATE_KEY 不能为空！"; exit 1; }
+        export EXAMPLES_TEST_PRIVATE_KEY  # 导出环境变量
     fi
 }
 
